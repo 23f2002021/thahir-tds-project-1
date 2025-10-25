@@ -15,6 +15,11 @@ load_dotenv()
 
 app = FastAPI(title="LLM Deployment API", description="Auto-builds and deploys AI-generated web apps")
 
+# ✅ Root route (prevents 404 on Render)
+@app.get("/")
+def home():
+    return {"message": "🚀 LLM Deployment API is running successfully on Render!"}
+
 # ✅ Step 0: Define JSON structure for Swagger and validation
 class TaskRequest(BaseModel):
     email: str
@@ -110,8 +115,7 @@ async def handle_task(data: TaskRequest, request: Request = None):
 
                     # 🧹 Clean up Markdown-style code fences if present
                     if generated_code.startswith("```"):
-                        generated_code = generated_code.split("```", 2)[1]  # remove first code block
-                        # Remove optional language tag (e.g. ```html)
+                        generated_code = generated_code.split("```", 2)[1]
                         generated_code = generated_code.replace("html\n", "").replace("html\r\n", "")
                         generated_code = generated_code.strip()
 
